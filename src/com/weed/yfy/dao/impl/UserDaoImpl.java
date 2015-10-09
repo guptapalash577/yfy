@@ -1,0 +1,127 @@
+package com.weed.yfy.dao.impl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+
+import com.weed.yfy.dao.UserDao;
+import com.weed.yfy.dao.support.AbstractJdbcDaoSupport;
+import com.weed.yfy.dto.User;
+
+/**
+ * @author palash
+ *
+ */
+@Repository
+public class UserDaoImpl extends AbstractJdbcDaoSupport implements UserDao {
+
+	private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
+	
+	private static class UserRowMapper implements RowMapper<User>{
+		
+		public User mapRow(ResultSet rs, int rowNum) throws SQLException{
+		
+			User user = new User();
+			user.setEmailId(rs.getString("email_id"));
+			user.setFirstName(rs.getString("first_name"));
+			user.setLastName(rs.getString("last_name"));
+			user.setMobileNo(rs.getLong("mobile_no"));
+			user.setUserId(rs.getInt("user_id"));
+			
+			return user;
+		}
+	}
+	
+	@Override
+	public int addUser(final User user) {
+		logger.info("UserDaoImpl addUser() start");
+		final String sql = "INSERT INTO users (user_name, password, email_id, mobile_no, created_on)"
+				+ " VALUES(?, md5(?), ?, ?, now())";
+		logger.debug("UserDaoImpl addUser() sql :: " + sql);
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		getJdbcTemplate().update(new PreparedStatementCreator() {
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement pstmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+				pstmt.setString(1, user.getEmailId());
+				pstmt.setString(2, user.getPassword());
+				pstmt.setString(3, user.getEmailId());
+				pstmt.setLong(4, user.getMobileNo());
+				return pstmt;
+			}
+		}, keyHolder);
+		int userId = keyHolder.getKey().intValue();
+		user.setUserId(userId);
+		logger.info("UserDaoImpl addUser() end");
+		return userId;
+	}
+
+	@Override
+	public User getUserByEmailId(String emailId) {
+		logger.info("UserDaoImpl getUserByEmailId() start");
+		String userSql = "select * from users where email_id = ?";
+		User user = null;
+		try {
+			user = getJdbcTemplate().queryForObject(userSql, new UserRowMapper(), emailId);
+		} catch (EmptyResultDataAccessException e){
+			logger.error("UserDaoImpl getUserByEmailId() EmptyResultDataAccessException");
+		} catch (DataAccessException e){
+			logger.error("UserDaoImpl getUserByEmailId() DataAccessException");
+		}catch (Exception e){
+			logger.error("UserDaoImpl getUserByEmailId() error ",e);
+		}
+		logger.info("UserDaoImpl getUserByEmailId() end");
+		return user;
+	}
+	
+	@Override
+	public void activateUserByEmail(String emailId) {
+		logger.info("UserDaoImpl activateUserByEmail() start");
+		String sql = "update users set is_email_verified=1 where emailId=?";
+		try {
+			getJdbcTemplate().update(sql,emailId);
+		} catch (Exception e){
+			logger.error("UserDaoImpl activateUserByEmail() error ",e);
+		}
+		logger.info("UserDaoImpl activateUserByEmail() end");
+	}
+
+	@Override
+	public User getUserByEmailIdAndPassword(String emailId, String password) {
+		logger.info("UserDaoImpl getUserByEmailIdAndPassword() start");
+		String userSql = "select * from users where email_id = ? and password = md5(?)";
+		User user = null;
+		try {
+			user = getJdbcTemplate().queryForObject(userSql, new UserRowMapper(), emailId, password);
+		} catch (EmptyResultDataAccessException e){
+			logger.error("UserDaoImpl getUserByEmailIdAndPassword() EmptyResultDataAccessException");
+		} catch (DataAccessException e){
+			logger.error("UserDaoImpl getUserByEmailIdAndPassword() DataAccessException");
+		}catch (Exception e){
+			logger.error("UserDaoImpl getUserByEmailIdAndPassword() error ",e);
+		}
+		logger.info("UserDaoImpl getUserByEmailIdAndPassword() end");
+		return user;
+	}
+
+	@Override
+	public void saveEmail(String email) {
+		logger.info("UserDaoImpl saveEmail() start");
+		String sql = "insert into emails (email, created_on) values (?, NOW())";
+		try {
+			getJdbcTemplate().update(sql,email);
+		} catch (Exception e){
+			logger.error("UserDaoImpl saveEmail() error ",e);
+		}
+		logger.info("UserDaoImpl saveEmail() end");
+	}
+}

@@ -1,0 +1,10 @@
+package com.weed.yfy.dao.impl;
+
+/**
+ * @author palash
+ *
+ */
+public class UserDaoImpl {
+
+	 
+}

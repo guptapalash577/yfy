@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700">
+<title>FoodGyro</title>
+</head>
+<body style="margin: 0;padding: 0;">
+	<%-- <%response.sendRedirect("signIn.yfy"); %> --%>
+	<!-- <img style="filter: blur(1px);position: fixed;" alt="" src="img/comingsoon.jpg"> -->
+	<nav class="navbar navbar-default nav-justified navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header page-scroll">
+				<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div>
+			<div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
+				<ul class="nav nav-justified" style="background-color: #006666">
+					<li class="hidden active">
+						<a href="#page-top"></a>
+					</li>
+					<li class="active">
+						<a class="page-scroll" href="#page-top">Home</a>
+					</li>
+					<li class="">
+						<a class="page-scroll" href="#about">About</a>
+					</li>
+					<li class="">
+						<a class="page-scroll" href="#menu">Menu</a>
+					</li>
+					<li class="">
+						<a class="page-scroll" href="#services">Services</a>
+					</li>
+					<li>
+						<a class="page-scroll" href="#events">Events</a>
+					</li>
+					<li>
+						<a class="page-scroll" href="#team">Team</a>
+					</li>
+					<li>
+						<a class="page-scroll" href="#contact">Contact us</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<header id="home">
+		<div class="container">
+			<div class="intro-text">
+				<div class="fadeInDown wow" style="visibility: visible; animation-name: fadeInDown;">
+					<div class="intro-lead-in">
+					COMING SOON
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+</body>
+</html>

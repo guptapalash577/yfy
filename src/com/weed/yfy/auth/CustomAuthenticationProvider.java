@@ -1,0 +1,55 @@
+package com.weed.yfy.auth;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+
+import com.weed.yfy.dto.User;
+import com.weed.yfy.service.UserService;
+
+/**
+ * @author palashg
+ *
+ */
+@Component("customAuthenticationProvider")
+public class CustomAuthenticationProvider implements AuthenticationProvider {
+
+	private static final Logger logger = Logger.getLogger(CustomAuthenticationProvider.class);
+	
+	@Autowired
+	private UserService userService;
+
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		try {
+			logger.debug("CustomAuthenticationProvider authenticate() authentication.getPrincipal(): " + authentication.getPrincipal());
+			logger.debug("CustomAuthenticationProvider authenticate() authentication.getCredentials(): " + authentication.getCredentials());
+			
+			User user = userService.getUserByEmailIdAndPassword(authentication.getPrincipal().toString(),authentication.getCredentials().toString());
+			if (user == null) {
+				throw new UsernameNotFoundException(String.format("Invalid credentials", authentication.getPrincipal()));
+			}
+			
+			List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+			
+			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, grantedAuthorities);
+			return token;
+		} catch (Exception e) {
+			logger.error("CustomAuthenticationProvider authenticate()", e);
+			throw new AuthenticationServiceException(e.getMessage());
+		}
+	}
+
+	public boolean supports(Class<?> authentication) {
+		return authentication.equals(UsernamePasswordAuthenticationToken.class);
+	}
+}

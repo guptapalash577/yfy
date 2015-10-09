@@ -1,0 +1,17 @@
+package com.weed.yfy.dao;
+
+import com.weed.yfy.dto.User;
+
+/**
+ * @author palash
+ *
+ */
+public interface UserDao {
+
+	int addUser(User user);
+
+	User getUserByEmailId(String emailId);
+
+	void activateUserByEmail(String emailId);
+
+}

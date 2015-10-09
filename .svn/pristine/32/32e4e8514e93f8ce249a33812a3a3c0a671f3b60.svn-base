@@ -1,0 +1,9 @@
+package com.weed.yfy.dao;
+
+/**
+ * @author palash
+ *
+ */
+public interface UserDao {
+
+}

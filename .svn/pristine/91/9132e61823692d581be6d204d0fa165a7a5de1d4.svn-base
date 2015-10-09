@@ -1,0 +1,15 @@
+package com.weed.yfy.service;
+
+import com.weed.yfy.dto.User;
+
+/**
+ * @author palash
+ *
+ */
+public interface UserService {
+
+	String addUser(User user);
+
+	User getUserByEmailId(String emailId);
+
+}

@@ -1,0 +1,65 @@
+package com.weed.yfy.dao.impl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+
+import com.weed.yfy.dao.UserDao;
+import com.weed.yfy.dao.support.AbstractJdbcDaoSupport;
+import com.weed.yfy.dto.User;
+
+/**
+ * @author palash
+ *
+ */
+@Repository
+public class UserDaoImpl extends AbstractJdbcDaoSupport implements UserDao {
+
+	private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
+	
+	private static class UserRowMapper implements RowMapper<User>{
+		
+		public User mapRow(ResultSet rs, int rowNum) throws SQLException{
+		
+			User user = new User();
+			user.setEmailId(rs.getString("email_id"));
+			user.setFirstName(rs.getString("first_name"));
+			user.setLastName(rs.getString("last_name"));
+			user.setMobileNo(rs.getInt("mobile_no"));
+			user.setUserId(rs.getInt("user_id"));
+			
+			return user;
+		}
+	}
+	
+	@Override
+	public int addUser(final User user) {
+		logger.info("UserDaoImpl addUser() start");
+		final String sql = "INSERT INTO users (user_name, password, email_id, mobile_no, created_on)"
+				+ " VALUES(?, md5(?), ?, ?, now())";
+		logger.debug("UserDaoImpl addUser() sql :: " + sql);
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		getJdbcTemplate().update(new PreparedStatementCreator() {
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement pstmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+				pstmt.setString(1, user.getEmailId());
+				pstmt.setString(2, user.getPassword());
+				pstmt.setString(3, user.getEmailId());
+				pstmt.setInt(4, user.getMobileNo());
+				return pstmt;
+			}
+		}, keyHolder);
+		int userId = keyHolder.getKey().intValue();
+		user.setUserId(userId);
+		logger.info("UserDaoImpl addUser() end");
+		return userId;
+	}
+}

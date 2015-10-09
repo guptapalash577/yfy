@@ -1,0 +1,112 @@
+package com.weed.yfy.controller;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.weed.yfy.dto.User;
+<<<<<<< .mine
+import com.weed.yfy.enums.LoginTypes;
+import com.weed.yfy.enums.MailMessageType;
+import com.weed.yfy.service.MailingService;
+=======
+>>>>>>> .r17
+import com.weed.yfy.service.UserService;
+
+/**
+ * @author palash
+ *
+ */
+@Controller
+public class YfYController {
+
+	private static final Logger logger = Logger.getLogger(YfYController.class);
+	
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	CustomAuthenticationProvider customAuthenticationProvider;
+	
+	@RequestMapping("/signIn")
+	public ModelAndView signIn() {
+		ModelAndView view = new ModelAndView("sign_in");
+		
+		return view;
+	}
+	
+	@RequestMapping(value="/register", method=RequestMethod.POST)
+	public String signUp(@RequestParam String emailId, @RequestParam Integer mobileNo, 
+			@RequestParam String password) {
+		logger.info("YfYController signUp() Start");
+<<<<<<< .mine
+		String status = "";
+		User existingUser = userService.getUserByEmailId(emailId);
+		if (existingUser == null){
+			User user = new User();
+			user.setEmailId(emailId);
+			user.setMobileNo(mobileNo);
+			user.setPassword(password);
+			
+			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setTo(emailId);
+			msg.setFrom("YfY");
+			msg.setSubject("Confirm Email Id");
+			Map<Object,Object> hTemplateVariables = new HashMap<Object,Object>();
+			hTemplateVariables.put("url", applicationProperties.getProperty("emailVerificationUrl")+"?emailId="+emailId);
+			mailing.send(msg, hTemplateVariables, MailMessageType.EMAIL_VERIFICATION+".vm");
+			
+			status = userService.addUser(user);
+			if (status.equals(YfYConstants.SUCCESS)) {
+				return "redirect:/signIn.yfy?status="+YfYConstants.SUCCESS;
+			}
+		}
+		logger.info("YfYController signUp() End");
+		return "redirect:/signIn.yfy?status="+YfYConstants.FAIL;
+	}
+	
+	@RequestMapping(value = "/verify_email", method = RequestMethod.GET)
+	public void userEmailVerification(@RequestParam String emailId, HttpServletResponse response) throws Exception {
+		logger.info("YfYController userEmailVerification() start");
+		if (StringUtils.isBlank(emailId)) {
+			logger.debug("YfYController userEmailVerification emailId is Blank");
+		} else {
+			userService.activateUserByEmail(emailId);
+		}
+		response.sendRedirect("http://localhost:8080/YfY/");
+	}
+	
+	@RequestMapping(value = "/fb_login", method = RequestMethod.POST)
+	@ResponseBody
+	public String fbLogin(@RequestParam String emailId, HttpServletRequest request) {
+		logger.info("YfYController fbLogin() start");
+		try {
+			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(emailId, null);
+			token.setDetails(LoginTypes.FB);
+			Authentication auth = customAuthenticationProvider.authenticate(token);
+			SecurityContextHolder.getContext().setAuthentication(auth);
+			HttpSession session = request.getSession();
+			User signedInUser = userService.getUserByEmailId(emailId);
+			session.setAttribute("yfyUser", signedInUser);
+			logger.info("YfYController fbLogin() end");
+			return "redirect:/home.yfy";
+		} catch (Exception e) {
+			logger.info("YfYController fbLogin() end");
+		    return YfYConstants.FAIL;
+		}
+=======
+		String success = "";
+		User user = new User();
+		user.setEmailId(emailId);
+		user.setMobileNo(mobileNo);
+		user.setPassword(password);
+		success = userService.addUser(user);
+		
+		return success;
+>>>>>>> .r17
+	}
+}

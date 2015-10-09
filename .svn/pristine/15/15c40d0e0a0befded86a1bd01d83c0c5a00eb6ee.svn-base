@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+   xsi:schemaLocation="http://www.springframework.org/schema/security
+     http://www.springframework.org/schema/security/spring-security-4.0.xsd
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+ 
+   <http pattern="/js/**" security="none"></http>
+   <http pattern="/css/**" security="none"></http>
+   <http pattern="/fonts/**" security="none"></http>
+   <http pattern="/img/**" security="none"></http>
+   <http use-expressions="true">
+       <intercept-url pattern="/" access="isAnonymous()" />
+       <intercept-url pattern="/j_spring_security_check" access="isAnonymous()" />
+       <intercept-url pattern="/signIn.yfy" access="isAnonymous()" />
+       <intercept-url pattern="/register.yfy" access="isAnonymous()" />
+       <intercept-url pattern="/**" access="isAuthenticated()" />
+ 
+       <form-login login-page='/signIn.yfy' default-target-url="/home.yfy" always-use-default-target="false"
+           authentication-failure-url="/signIn.yfy?error=true" login-processing-url="/j_spring_security_check"
+           username-parameter="j_username" password-parameter="j_password"/>
+ 
+       <logout logout-url="/logout.yfy" logout-success-url="/signIn.yfy"
+           delete-cookies="JSESSIONID" invalidate-session="true" />
+ 
+   </http>
+   
+	<beans:bean id="customAuthenticationProvider" class="com.weed.yfy.auth.CustomAuthenticationProvider" />
+ 	<authentication-manager>
+ 		<authentication-provider ref="customAuthenticationProvider" />
+	</authentication-manager> 
+</beans:beans>

@@ -1,0 +1,8 @@
+<html>
+	<div>
+		Hi,<br>
+		<br>Please click below link to confirm your password. </b><br>
+		<a href="${url}">Confirm Email</a><br>
+		<br>Thank you!<br>
+	</div>
+</html>

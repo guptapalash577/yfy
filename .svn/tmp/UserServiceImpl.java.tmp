@@ -1,0 +1,8 @@
+package com.weed.yfy.service.impl;
+
+/**
+ * @author palash
+ *
+ */
+public class UserServiceImpl {
+}
